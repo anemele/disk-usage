@@ -5,9 +5,11 @@ from typing import AsyncGenerator
 from rich import print as rich_print
 
 T_ITEM = tuple[int, int, int]
+T_OS_WALKER = tuple[str, list[str], list[str]]
+T_AG = AsyncGenerator[T_ITEM, None]
 
 
-def count_root(root: tuple[str, list[str], list[str]]) -> T_ITEM:
+async def count_root(root: T_OS_WALKER) -> T_ITEM:
     """return a tuple of
     (number of dirs, number of files, size of files)"""
     r, d, f = root
@@ -15,19 +17,19 @@ def count_root(root: tuple[str, list[str], list[str]]) -> T_ITEM:
     return len(d), len(f), sum(map(os.path.getsize, pth))
 
 
-async def count(directory: str, recursive: bool) -> AsyncGenerator[T_ITEM, None]:
+async def count(directory: str, recursive: bool) -> T_AG:
     walker = os.walk(directory)
-    yield count_root(next(walker))
+    yield await count_root(next(walker))
 
     if recursive:
         try:
-            for item in map(count_root, walker):
-                yield item
+            for item in walker:
+                yield await count_root(item)
         except KeyboardInterrupt:
             pass
 
 
-async def pprint(count):
+async def pprint(count: T_AG):
     nd, nf, ns = 0, 0, 0
     async for d, f, s in count:
         nd += d
