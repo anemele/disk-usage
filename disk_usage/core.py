@@ -24,8 +24,7 @@ def count(directory: str, recursive: bool) -> Iterable[tuple[int, int, int]]:
             pass
 
 
-def pprint(root: str, count: Iterable[tuple[int, int, int]]):
-    print('\n', os.path.abspath(root), '\n')
+def pprint(count: Iterable[tuple[int, int, int]]):
     nd, nf, ns = 0, 0, 0
     for d, f, s in count:
         nd += d

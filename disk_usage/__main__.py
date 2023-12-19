@@ -30,4 +30,5 @@ if not os.path.isdir(args_dir):
     print(f'not a dir: {args_dir}')
     exit(1)
 
-pprint(args_dir, count(args_dir, args_r))
+print('\n', os.path.abspath(args_dir), '\n')
+pprint(count(args_dir, args_r))
